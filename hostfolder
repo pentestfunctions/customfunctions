@@ -1,0 +1,23 @@
+#!/bin/bash
+
+clear
+
+ipv4_address=$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | head -1)
+
+echo "--------------------------------------------------------"
+echo "Download files using wget to /tmp from $ipv4_address:1337"
+echo "--------------------------------------------------------"
+
+# Use find to list regular files and process each with a while loop
+find . -maxdepth 1 -type f -exec basename {} \; | while read -r file; do
+    # URL encode the file name
+    encoded_file=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$file'))")
+    # Print the wget command with the encoded file name
+    echo "wget -P /tmp http://$ipv4_address:1337/$encoded_file"
+done
+
+echo "--------------------------------------------------------"
+echo "Hosting at $ipv4_address:1337"
+echo "--------------------------------------------------------"
+
+python3 -m http.server 1337 --bind $ipv4_address
