@@ -9,7 +9,7 @@ echo "Download files using wget to /tmp from $ipv4_address:1337"
 echo "--------------------------------------------------------"
 
 # Use find to list regular files and process each with a while loop
-find . -maxdepth 1 -type f -exec basename {} \; | while read -r file; do
+find . -maxdepth 1 -type f -exec basename {} \; | tee /tmp/file_list.txt | while read -r file; do
     # URL encode the file name
     encoded_file=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$file'))")
     # Print the wget command with the encoded file name
